@@ -14,117 +14,86 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.example.queueapp.R
 import com.example.queueapp.viewmodel.AppViewModel
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TicketInfoScreen(
+    deskId: String,
     viewModel: AppViewModel,
     onBackClick: () -> Unit
 ) {
-    val state     by viewModel.state.collectAsState()
-    val userTicket = state.userTicket
+    val state      by viewModel.state.collectAsState()
+    val userTicket = state.userTickets.find { it.deskId == deskId }
 
     if (userTicket == null) {
-        Scaffold(
-            topBar = {
-                TopAppBar(
-                    title = { Text("Mon Ticket") },
-                    navigationIcon = {
-                        IconButton(onClick = onBackClick) {
-                            Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
-                        }
-                    }
-                )
-            }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("Aucun ticket actif.")
+        Scaffold(topBar = {
+            TopAppBar(title = { Text(stringResource(R.string.your_ticket_title)) },
+                navigationIcon = { IconButton(onClick = onBackClick) {
+                    Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back)) } })
+        }) { p ->
+            Box(Modifier.fillMaxSize().padding(p), Alignment.Center) {
+                Text(stringResource(R.string.no_active_ticket))
             }
         }
         return
     }
 
-    // Get live desk state for reactive updates via StateFlow
-    val desk = state.entities
-        .find { it.id == userTicket.entityId }
-        ?.desks?.find { it.id == userTicket.deskId }
+    val desk           = state.entities.find { it.id == userTicket.entityId }?.desks?.find { it.id == deskId }
     val currentServing = desk?.currentServing ?: 0
-    val position = (userTicket.ticketNumber - currentServing).coerceAtLeast(0)
-    val isCalled = currentServing >= userTicket.ticketNumber
+    val position       = (userTicket.ticketNumber - currentServing).coerceAtLeast(0)
+    val isCalled       = currentServing >= userTicket.ticketNumber
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Mon Ticket") },
+                title = { Text(stringResource(R.string.your_ticket_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor        = MaterialTheme.colorScheme.primary,
+                    titleContentColor     = MaterialTheme.colorScheme.onPrimary,
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
     ) { innerPadding ->
         Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.spacedBy(20.dp, Alignment.Top)
+            modifier                = Modifier.fillMaxSize().padding(innerPadding).padding(24.dp),
+            horizontalAlignment     = Alignment.CenterHorizontally,
+            verticalArrangement     = Arrangement.spacedBy(20.dp, Alignment.Top)
         ) {
-            // Entity & desk info
-            Card(
-                modifier = Modifier.fillMaxWidth(),
-                shape    = RoundedCornerShape(12.dp)
-            ) {
-                Column(modifier = Modifier.padding(16.dp)) {
-                    Text(
-                        text  = userTicket.entityName,
-                        style = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text  = "Guichet : ${userTicket.deskName}",
-                        style = MaterialTheme.typography.bodyMedium,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+            // Entity + desk card
+            Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp)) {
+                Column(Modifier.padding(16.dp)) {
+                    Text(userTicket.entityName, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(stringResource(R.string.desk_label, userTicket.deskName),
+                        style = MaterialTheme.typography.bodyMedium, color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
             }
 
-            // Ticket number big display
+            // Big ticket circle
             Box(
-                modifier = Modifier
-                    .size(180.dp)
-                    .clip(CircleShape)
-                    .background(
-                        if (isCalled) MaterialTheme.colorScheme.secondary
-                        else MaterialTheme.colorScheme.primary
-                    ),
+                modifier         = Modifier.size(180.dp).clip(CircleShape)
+                    .background(if (isCalled) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary),
                 contentAlignment = Alignment.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Text(
-                        text  = "Votre ticket",
+                    Text(stringResource(R.string.your_ticket_label),
                         style = MaterialTheme.typography.labelLarge,
-                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f)
-                    )
+                        color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.8f))
                     Text(
-                        text       = "#${userTicket.ticketNumber}",
+                        stringResource(R.string.ticket_number, userTicket.ticketNumber),
                         fontSize   = 52.sp,
                         fontWeight = FontWeight.Bold,
                         color      = MaterialTheme.colorScheme.onPrimary
@@ -132,138 +101,72 @@ fun TicketInfoScreen(
                 }
             }
 
-            // Status cards row
-            Row(
-                modifier              = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                StatusCard(
+            // Stats row
+            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                StatCard(
                     modifier = Modifier.weight(1f),
-                    label    = "En cours de service",
-                    value    = if (currentServing == 0) "—" else "#$currentServing",
+                    label    = stringResource(R.string.serving_label),
+                    value    = if (currentServing == 0) stringResource(R.string.none_serving) else "#$currentServing",
                     icon     = Icons.Filled.HourglassEmpty,
                     tint     = MaterialTheme.colorScheme.tertiary
                 )
-                StatusCard(
+                StatCard(
                     modifier = Modifier.weight(1f),
-                    label    = "Votre position",
-                    value    = if (isCalled) "Votre tour !" else "$position",
+                    label    = stringResource(R.string.position_label),
+                    value    = if (isCalled) stringResource(R.string.your_turn) else "$position",
                     icon     = if (isCalled) Icons.Filled.CheckCircle else Icons.Filled.Notifications,
-                    tint     = if (isCalled) MaterialTheme.colorScheme.secondary
-                               else MaterialTheme.colorScheme.primary
+                    tint     = if (isCalled) MaterialTheme.colorScheme.secondary else MaterialTheme.colorScheme.primary
                 )
             }
 
-            // Called banner
-            if (isCalled) {
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape    = RoundedCornerShape(12.dp),
-                    colors   = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.secondary
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Filled.CheckCircle,
-                            contentDescription = null,
-                            tint     = MaterialTheme.colorScheme.onSecondary,
-                            modifier = Modifier.size(28.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text       = "C'est votre tour ! Présentez-vous au guichet « ${userTicket.deskName} ».",
-                            style      = MaterialTheme.typography.bodyMedium,
-                            color      = MaterialTheme.colorScheme.onSecondary,
-                            fontWeight = FontWeight.SemiBold
-                        )
-                    }
-                }
-            } else if (position in 1..5) {
-                // Warning: approaching
-                Card(
-                    modifier = Modifier.fillMaxWidth(),
-                    shape    = RoundedCornerShape(12.dp),
-                    colors   = CardDefaults.cardColors(
-                        containerColor = MaterialTheme.colorScheme.tertiaryContainer
-                    )
-                ) {
-                    Row(
-                        modifier = Modifier.padding(16.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Icon(
-                            Icons.Filled.Notifications,
-                            contentDescription = null,
-                            tint     = MaterialTheme.colorScheme.onTertiaryContainer,
-                            modifier = Modifier.size(28.dp)
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text(
-                            text  = "Plus que $position personne(s) avant vous. Tenez-vous prêt !",
-                            style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onTertiaryContainer
-                        )
-                    }
-                }
+            // Status banners
+            when {
+                isCalled -> StatusBanner(
+                    containerColor = MaterialTheme.colorScheme.secondary,
+                    icon           = Icons.Filled.CheckCircle,
+                    message        = stringResource(R.string.present_yourself, userTicket.deskName),
+                    onContent      = MaterialTheme.colorScheme.onSecondary
+                )
+                position in 1..5 -> StatusBanner(
+                    containerColor = MaterialTheme.colorScheme.tertiaryContainer,
+                    icon           = Icons.Filled.Notifications,
+                    message        = stringResource(R.string.almost_your_turn, position),
+                    onContent      = MaterialTheme.colorScheme.onTertiaryContainer
+                )
             }
 
-            Spacer(modifier = Modifier.weight(1f))
+            Spacer(Modifier.weight(1f))
 
-            // Cancel ticket button
             OutlinedButton(
-                onClick  = {
-                    viewModel.clearUserTicket()
-                    onBackClick()
-                },
+                onClick  = { viewModel.cancelTicket(deskId); onBackClick() },
                 modifier = Modifier.fillMaxWidth()
             ) {
-                Text("Annuler mon ticket")
+                Text(stringResource(R.string.cancel_ticket))
             }
         }
     }
 }
 
 @Composable
-private fun StatusCard(
-    modifier: Modifier,
-    label: String,
-    value: String,
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
-    tint: androidx.compose.ui.graphics.Color
-) {
-    Card(
-        modifier  = modifier,
-        shape     = RoundedCornerShape(12.dp),
-        elevation = CardDefaults.cardElevation(defaultElevation = 2.dp)
-    ) {
-        Column(
-            modifier            = Modifier.padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-            Icon(
-                imageVector        = icon,
-                contentDescription = null,
-                tint               = tint,
-                modifier           = Modifier.size(28.dp)
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text       = value,
-                style      = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color      = tint,
-                textAlign  = TextAlign.Center
-            )
-            Text(
-                text      = label,
-                style     = MaterialTheme.typography.labelSmall,
-                color     = MaterialTheme.colorScheme.onSurfaceVariant,
-                textAlign = TextAlign.Center
-            )
+private fun StatCard(modifier: Modifier, label: String, value: String, icon: ImageVector, tint: androidx.compose.ui.graphics.Color) {
+    Card(modifier = modifier, shape = RoundedCornerShape(12.dp), elevation = CardDefaults.cardElevation(2.dp)) {
+        Column(modifier = Modifier.padding(16.dp), horizontalAlignment = Alignment.CenterHorizontally) {
+            Icon(icon, null, tint = tint, modifier = Modifier.size(28.dp))
+            Spacer(Modifier.height(8.dp))
+            Text(value, style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = tint, textAlign = TextAlign.Center)
+            Text(label, style = MaterialTheme.typography.labelSmall, color = MaterialTheme.colorScheme.onSurfaceVariant, textAlign = TextAlign.Center)
+        }
+    }
+}
+
+@Composable
+private fun StatusBanner(containerColor: androidx.compose.ui.graphics.Color, icon: ImageVector, message: String, onContent: androidx.compose.ui.graphics.Color) {
+    Card(modifier = Modifier.fillMaxWidth(), shape = RoundedCornerShape(12.dp),
+        colors = CardDefaults.cardColors(containerColor = containerColor)) {
+        Row(modifier = Modifier.padding(16.dp), verticalAlignment = Alignment.CenterVertically) {
+            Icon(icon, null, tint = onContent, modifier = Modifier.size(28.dp))
+            Spacer(Modifier.width(12.dp))
+            Text(message, style = MaterialTheme.typography.bodyMedium, color = onContent, fontWeight = FontWeight.SemiBold)
         }
     }
 }

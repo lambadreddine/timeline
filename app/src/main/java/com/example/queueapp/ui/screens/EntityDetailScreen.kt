@@ -11,8 +11,10 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import com.example.queueapp.R
 import com.example.queueapp.data.Desk
 import com.example.queueapp.viewmodel.AppViewModel
 
@@ -21,7 +23,7 @@ import com.example.queueapp.viewmodel.AppViewModel
 fun EntityDetailScreen(
     entityId: String,
     viewModel: AppViewModel,
-    onTicketTaken: () -> Unit,
+    onTicketTaken: (deskId: String) -> Unit,
     onBackClick: () -> Unit
 ) {
     val state  by viewModel.state.collectAsState()
@@ -29,7 +31,7 @@ fun EntityDetailScreen(
 
     if (entity == null) {
         Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
-            Text("Entité introuvable.")
+            Text(stringResource(R.string.entity_not_found))
         }
         return
     }
@@ -40,28 +42,25 @@ fun EntityDetailScreen(
                 title = { Text(entity.name) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor        = MaterialTheme.colorScheme.primary,
+                    titleContentColor     = MaterialTheme.colorScheme.onPrimary,
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
     ) { innerPadding ->
         LazyColumn(
-            modifier            = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(horizontal = 16.dp),
+            modifier            = Modifier.fillMaxSize().padding(innerPadding).padding(horizontal = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp),
             contentPadding      = PaddingValues(vertical = 16.dp)
         ) {
             item {
                 Text(
-                    text       = "Sélectionnez un guichet",
+                    stringResource(R.string.select_desk),
                     style      = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.SemiBold,
                     color      = MaterialTheme.colorScheme.onSurfaceVariant
@@ -69,29 +68,23 @@ fun EntityDetailScreen(
             }
 
             items(entity.desks) { desk ->
+                val alreadyHasTicket = state.userTickets.any { it.deskId == desk.id }
                 DeskTicketCard(
-                    desk        = desk,
-                    hasTicket   = state.userTicket?.deskId == desk.id,
-                    onTakeTicket = {
-                        viewModel.takeTicket(entity.id, desk.id)
-                        onTicketTaken()
+                    desk             = desk,
+                    alreadyHasTicket = alreadyHasTicket,
+                    onTakeTicket     = {
+                        val issued = viewModel.takeTicket(entity.id, desk.id)
+                        if (issued > 0) onTicketTaken(desk.id)
                     }
                 )
             }
 
             if (entity.desks.isEmpty()) {
                 item {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(32.dp),
-                        contentAlignment = Alignment.Center
-                    ) {
-                        Text(
-                            text  = "Aucun guichet disponible pour cette entité.",
+                    Box(Modifier.fillMaxWidth().padding(32.dp), Alignment.Center) {
+                        Text(stringResource(R.string.no_desks_client),
                             style = MaterialTheme.typography.bodyMedium,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                 }
             }
@@ -102,7 +95,7 @@ fun EntityDetailScreen(
 @Composable
 private fun DeskTicketCard(
     desk: Desk,
-    hasTicket: Boolean,
+    alreadyHasTicket: Boolean,
     onTakeTicket: () -> Unit
 ) {
     Card(
@@ -116,27 +109,21 @@ private fun DeskTicketCard(
                 horizontalArrangement = Arrangement.SpaceBetween,
                 verticalAlignment     = Alignment.CenterVertically
             ) {
-                Column(modifier = Modifier.weight(1f)) {
-                    Text(
-                        text       = desk.name,
-                        style      = MaterialTheme.typography.titleMedium,
-                        fontWeight = FontWeight.SemiBold
-                    )
-                    Text(
-                        text  = desk.description,
-                        style = MaterialTheme.typography.bodySmall,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant
-                    )
+                Column(Modifier.weight(1f)) {
+                    Text(desk.name, style = MaterialTheme.typography.titleMedium, fontWeight = FontWeight.SemiBold)
+                    Text(desk.description, style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant)
                 }
-                Spacer(modifier = Modifier.width(8.dp))
+                Spacer(Modifier.width(8.dp))
                 Column(horizontalAlignment = Alignment.End) {
                     Text(
-                        text  = "En cours",
+                        stringResource(R.string.serving_label),
                         style = MaterialTheme.typography.labelSmall,
                         color = MaterialTheme.colorScheme.onSurfaceVariant
                     )
                     Text(
-                        text       = if (desk.currentServing == 0) "—" else "#${desk.currentServing}",
+                        if (desk.currentServing == 0) stringResource(R.string.none_serving)
+                        else "#${desk.currentServing}",
                         style      = MaterialTheme.typography.titleLarge,
                         fontWeight = FontWeight.Bold,
                         color      = MaterialTheme.colorScheme.secondary
@@ -144,7 +131,7 @@ private fun DeskTicketCard(
                 }
             }
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(Modifier.height(12.dp))
 
             Row(
                 modifier              = Modifier.fillMaxWidth(),
@@ -152,22 +139,21 @@ private fun DeskTicketCard(
                 verticalAlignment     = Alignment.CenterVertically
             ) {
                 Text(
-                    text  = "Prochain ticket : #${desk.ticketCounter}",
+                    stringResource(R.string.next_ticket_label, desk.ticketCounter),
                     style = MaterialTheme.typography.bodyMedium,
                     color = MaterialTheme.colorScheme.onSurfaceVariant
                 )
                 Button(
                     onClick  = onTakeTicket,
-                    enabled  = !hasTicket,
+                    enabled  = !alreadyHasTicket,
                     contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp)
                 ) {
-                    Icon(
-                        imageVector = Icons.Filled.ConfirmationNumber,
-                        contentDescription = null,
-                        modifier = Modifier.size(18.dp)
+                    Icon(Icons.Filled.ConfirmationNumber, null, Modifier.size(18.dp))
+                    Spacer(Modifier.width(6.dp))
+                    Text(
+                        if (alreadyHasTicket) stringResource(R.string.ticket_taken)
+                        else stringResource(R.string.take_ticket)
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(if (hasTicket) "Ticket pris" else "Prendre un ticket")
                 }
             }
         }

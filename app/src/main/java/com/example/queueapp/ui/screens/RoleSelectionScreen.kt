@@ -9,10 +9,13 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import com.example.queueapp.R
 
 @Composable
 fun RoleSelectionScreen(
@@ -20,101 +23,74 @@ fun RoleSelectionScreen(
     onManagerSelected: () -> Unit
 ) {
     Column(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(32.dp),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally
+        modifier = Modifier.fillMaxSize().padding(32.dp),
+        verticalArrangement   = Arrangement.Center,
+        horizontalAlignment   = Alignment.CenterHorizontally
     ) {
-        // App title
         Text(
-            text       = "File d'Attente",
+            text       = stringResource(R.string.app_name),
             style      = MaterialTheme.typography.headlineLarge,
             fontWeight = FontWeight.Bold,
             color      = MaterialTheme.colorScheme.primary
         )
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(Modifier.height(8.dp))
         Text(
-            text      = "Gestion des tickets et files d'attente",
+            text      = stringResource(R.string.app_subtitle),
             style     = MaterialTheme.typography.bodyMedium,
             color     = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Center
         )
 
-        Spacer(modifier = Modifier.height(64.dp))
+        Spacer(Modifier.height(64.dp))
 
         Text(
-            text  = "Sélectionnez votre profil",
-            style = MaterialTheme.typography.titleMedium,
-            color = MaterialTheme.colorScheme.onSurface
+            text  = stringResource(R.string.select_profile),
+            style = MaterialTheme.typography.titleMedium
         )
+        Spacer(Modifier.height(32.dp))
 
-        Spacer(modifier = Modifier.height(32.dp))
-
-        // Client button
         RoleCard(
-            icon        = Icons.Filled.Person,
-            title       = "Client",
-            subtitle    = "Voir la carte et prendre un ticket",
+            icon           = Icons.Filled.Person,
+            title          = stringResource(R.string.role_client),
+            subtitle       = stringResource(R.string.role_client_desc),
             containerColor = MaterialTheme.colorScheme.primary,
-            onClick     = onClientSelected
+            onClick        = onClientSelected
         )
-
-        Spacer(modifier = Modifier.height(20.dp))
-
-        // Manager button
+        Spacer(Modifier.height(20.dp))
         RoleCard(
-            icon        = Icons.Filled.AdminPanelSettings,
-            title       = "Gestionnaire",
-            subtitle    = "Gérer les entités, guichets et tickets",
+            icon           = Icons.Filled.AdminPanelSettings,
+            title          = stringResource(R.string.role_manager),
+            subtitle       = stringResource(R.string.role_manager_desc),
             containerColor = MaterialTheme.colorScheme.secondary,
-            onClick     = onManagerSelected
+            onClick        = onManagerSelected
         )
     }
 }
 
 @Composable
 private fun RoleCard(
-    icon: androidx.compose.ui.graphics.vector.ImageVector,
+    icon: ImageVector,
     title: String,
     subtitle: String,
-    containerColor: androidx.compose.ui.graphics.Color,
+    containerColor: Color,
     onClick: () -> Unit
 ) {
     Card(
-        onClick    = onClick,
-        modifier   = Modifier
-            .fillMaxWidth()
-            .height(120.dp),
-        shape      = RoundedCornerShape(16.dp),
-        colors     = CardDefaults.cardColors(containerColor = containerColor)
+        onClick  = onClick,
+        modifier = Modifier.fillMaxWidth().height(120.dp),
+        shape    = RoundedCornerShape(16.dp),
+        colors   = CardDefaults.cardColors(containerColor = containerColor)
     ) {
         Row(
-            modifier            = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 24.dp),
-            verticalAlignment   = Alignment.CenterVertically,
+            modifier              = Modifier.fillMaxSize().padding(horizontal = 24.dp),
+            verticalAlignment     = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.Start
         ) {
-            Icon(
-                imageVector = icon,
-                contentDescription = title,
-                modifier    = Modifier.size(48.dp),
-                tint        = MaterialTheme.colorScheme.onPrimary
-            )
-            Spacer(modifier = Modifier.width(20.dp))
+            Icon(icon, contentDescription = title, modifier = Modifier.size(48.dp), tint = Color.White)
+            Spacer(Modifier.width(20.dp))
             Column {
-                Text(
-                    text       = title,
-                    style      = MaterialTheme.typography.titleLarge,
-                    fontWeight = FontWeight.Bold,
-                    color      = MaterialTheme.colorScheme.onPrimary
-                )
-                Text(
-                    text  = subtitle,
-                    style = MaterialTheme.typography.bodyMedium,
-                    color = MaterialTheme.colorScheme.onPrimary.copy(alpha = 0.85f)
-                )
+                Text(title, style = MaterialTheme.typography.titleLarge, fontWeight = FontWeight.Bold, color = Color.White)
+                Text(subtitle, style = MaterialTheme.typography.bodyMedium, color = Color.White.copy(alpha = 0.85f))
             }
         }
     }

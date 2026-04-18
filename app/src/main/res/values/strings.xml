@@ -1,4 +1,94 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- App -->
     <string name="app_name">File d\'Attente</string>
+    <string name="app_subtitle">Gestion des tickets et files d\'attente</string>
+
+    <!-- Role selection -->
+    <string name="select_profile">Sélectionnez votre profil</string>
+    <string name="role_client">Client</string>
+    <string name="role_client_desc">Voir la carte et prendre un ticket</string>
+    <string name="role_manager">Gestionnaire</string>
+    <string name="role_manager_desc">Gérer les entités, guichets et tickets</string>
+
+    <!-- Map -->
+    <string name="map_title">Carte des Services</string>
+    <string name="map_hint">Appuyez sur un marqueur pour voir les détails</string>
+    <string name="my_tickets">Mes Tickets</string>
+    <string name="zoom_in">Zoom avant</string>
+    <string name="zoom_out">Zoom arrière</string>
+
+    <!-- Entity / Desk -->
+    <string name="desks_available">%d guichet(s) disponible(s)</string>
+    <string name="select_desk">Sélectionnez un guichet</string>
+    <string name="desk_label">Guichet : %s</string>
+    <string name="serving_now">En cours : %s</string>
+    <string name="next_ticket_label">Prochain : #%d</string>
+    <string name="take_ticket">Prendre un ticket</string>
+    <string name="ticket_taken">Ticket pris</string>
+    <string name="no_desks_client">Aucun guichet disponible pour cette entité.</string>
+
+    <!-- Ticket info -->
+    <string name="your_ticket_title">Votre Ticket</string>
+    <string name="your_ticket_label">Votre ticket</string>
+    <string name="ticket_number">#%d</string>
+    <string name="serving_label">En cours de service</string>
+    <string name="position_label">Votre position</string>
+    <string name="none_serving">—</string>
+    <string name="your_turn">Votre tour !</string>
+    <string name="almost_your_turn">Plus que %d personne(s) avant vous. Tenez-vous prêt\u00a0!</string>
+    <string name="present_yourself">C\'est votre tour\u00a0! Présentez-vous au guichet «\u00a0%s\u00a0».</string>
+    <string name="cancel_ticket">Annuler ce ticket</string>
+    <string name="waiting_count">%d en attente</string>
+    <string name="entity_label">%s</string>
+
+    <!-- My Tickets screen -->
+    <string name="my_tickets_title">Mes Tickets</string>
+    <string name="no_tickets">Vous n\'avez aucun ticket actif.\nPrenez un ticket depuis la carte.</string>
+    <string name="active_tickets_count">%d ticket(s) actif(s)</string>
+
+    <!-- Manager -->
+    <string name="manager_title">Tableau de bord</string>
+    <string name="entities_count">%d entité(s) enregistrée(s)</string>
+    <string name="no_entities">Aucune entité. Appuyez sur + pour en créer une.</string>
+    <string name="desks_count">%d guichet(s)</string>
+    <string name="no_desks">Aucun guichet. Appuyez sur + pour en ajouter.</string>
+    <string name="next_ticket_btn">Ticket suivant</string>
+    <string name="currently_serving_manager">Ticket en cours</string>
+    <string name="no_ticket_serving">En attente</string>
+    <string name="issued_count">%d émis</string>
+
+    <!-- Create entity -->
+    <string name="create_entity_title">Nouvelle entité</string>
+    <string name="entity_info">Informations de l\'entité</string>
+    <string name="entity_name_hint">Nom de l\'entité *</string>
+    <string name="entity_name_placeholder">ex. La Poste, Mairie…</string>
+    <string name="gps_coords">Coordonnées GPS</string>
+    <string name="latitude_hint">Latitude *</string>
+    <string name="longitude_hint">Longitude *</string>
+    <string name="save_entity">Enregistrer l\'entité</string>
+    <string name="constantine_hint">Constantine ≈ Lat: 36.3650, Lng: 6.6147.\nUtilisez Google Maps pour les coordonnées exactes.</string>
+    <string name="required_field">Ce champ est requis</string>
+    <string name="invalid_lat">Latitude invalide (ex. 36.3650)</string>
+    <string name="invalid_lng">Longitude invalide (ex. 6.6147)</string>
+
+    <!-- Add desk -->
+    <string name="add_desk_title">Nouveau guichet</string>
+    <string name="desk_info">Informations du guichet</string>
+    <string name="desk_name_hint">Nom du guichet *</string>
+    <string name="desk_name_placeholder">ex. Courrier, État Civil…</string>
+    <string name="desk_desc_hint">Description *</string>
+    <string name="desk_desc_placeholder">ex. Réception et envoi de colis</string>
+    <string name="save_desk">Enregistrer le guichet</string>
+
+    <!-- Notifications -->
+    <string name="notif_title">Bientôt votre tour\u00a0!</string>
+    <string name="notif_message">Il reste %d personne(s) avant vous au guichet «\u00a0%s\u00a0».</string>
+
+    <!-- Common -->
+    <string name="back">Retour</string>
+    <string name="add">Ajouter</string>
+    <string name="entity_not_found">Entité introuvable.</string>
+    <string name="no_active_ticket">Aucun ticket actif.</string>
+    <string name="lat_short">Lat: %.4f</string>
 </resources>

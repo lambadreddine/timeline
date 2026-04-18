@@ -1,0 +1,94 @@
+[
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-hdpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-hdpi\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-mdpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-mdpi\\ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-xhdpi_ic_launcher_round.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-xhdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-hdpi_ic_launcher_round.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-hdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-mdpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-mdpi\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-xxxhdpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-xxxhdpi\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-anydpi-v26/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-xhdpi_ic_launcher.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-xhdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-xxxhdpi_ic_launcher_round.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-xxxhdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-xxxhdpi_ic_launcher.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-xxxhdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-anydpi-v26/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-hdpi_ic_launcher.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-hdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-xxxhdpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-xxxhdpi\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-xxhdpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-xxhdpi\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-xhdpi_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-xhdpi\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-mdpi_ic_launcher_round.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-mdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-xhdpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-xhdpi\\ic_launcher.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-xxhdpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-xxhdpi\\ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-xxhdpi_ic_launcher_round.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-xxhdpi/ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-debug-52:\\mipmap-hdpi_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Artyomich\\.gradle\\daemon\\8.6\\com.example.queueapp-main-54:\\mipmap-hdpi\\ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-mdpi_ic_launcher.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-mdpi/ic_launcher.xml"
+    },
+    {
+        "merged": "com.example.queueapp-debug-52:/mipmap-xxhdpi_ic_launcher.xml.flat",
+        "source": "com.example.queueapp-main-54:/mipmap-xxhdpi/ic_launcher.xml"
+    }
+]

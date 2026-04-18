@@ -14,8 +14,8 @@ data class Desk(
     val id: String = UUID.randomUUID().toString(),
     val name: String,
     val description: String,
-    val currentServing: Int = 0,   // ticket number currently being served (0 = none yet)
-    val ticketCounter: Int = 1      // next ticket number to be issued
+    val currentServing: Int = 0,   // ticket currently being served (0 = none)
+    val ticketCounter: Int = 1      // next ticket number to issue
 )
 
 data class UserTicket(
@@ -26,7 +26,8 @@ data class UserTicket(
     val entityName: String
 )
 
+/** Emitted by the ViewModel; formatted into a string in the UI layer. */
 data class NotificationEvent(
-    val title: String,
-    val message: String
+    val remainingCount: Int,
+    val deskName: String
 )

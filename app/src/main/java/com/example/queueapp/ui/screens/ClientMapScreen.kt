@@ -1,16 +1,22 @@
 package com.example.queueapp.ui.screens
 
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ConfirmationNumber
+import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.example.queueapp.R
 import com.example.queueapp.data.Entity
 import com.example.queueapp.viewmodel.AppViewModel
 import org.osmdroid.config.Configuration
@@ -19,7 +25,6 @@ import org.osmdroid.util.GeoPoint
 import org.osmdroid.views.MapView
 import org.osmdroid.views.overlay.Marker
 
-// Constantine, Algeria
 private val CONSTANTINE = GeoPoint(36.3650, 6.6147)
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -27,20 +32,17 @@ private val CONSTANTINE = GeoPoint(36.3650, 6.6147)
 fun ClientMapScreen(
     viewModel: AppViewModel,
     onEntityClick: (String) -> Unit,
+    onMyTickets: () -> Unit,
     onBackClick: () -> Unit
 ) {
-    val state   by viewModel.state.collectAsState()
-    val context = LocalContext.current
-
+    val state          by viewModel.state.collectAsState()
+    val context        = LocalContext.current
     var selectedEntity by remember { mutableStateOf<Entity?>(null) }
+    var mapViewRef     by remember { mutableStateOf<MapView?>(null) }
+    val ticketCount    = state.userTickets.size
 
-    // Keep a stable callback reference so the AndroidView update block
-    // always uses the latest selectedEntity setter without recreating the view.
-    val onMarkerClick by rememberUpdatedState { entity: Entity ->
-        selectedEntity = entity
-    }
+    val onMarkerClick by rememberUpdatedState { entity: Entity -> selectedEntity = entity }
 
-    // Initialise OSMDroid configuration once
     LaunchedEffect(Unit) {
         Configuration.getInstance().apply {
             load(context, context.getSharedPreferences("osmdroid", 0))
@@ -51,25 +53,23 @@ fun ClientMapScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("Carte des Services") },
+                title = { Text(stringResource(R.string.map_title)) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, contentDescription = "Retour")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, stringResource(R.string.back))
                     }
                 },
                 colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
+                    containerColor        = MaterialTheme.colorScheme.primary,
+                    titleContentColor     = MaterialTheme.colorScheme.onPrimary,
                     navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
                 )
             )
         }
     ) { innerPadding ->
-        Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-        ) {
+        Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
+
+            // ── Map ──────────────────────────────────────────
             AndroidView(
                 modifier = Modifier.fillMaxSize(),
                 factory  = { ctx ->
@@ -78,21 +78,18 @@ fun ClientMapScreen(
                         setMultiTouchControls(true)
                         controller.setZoom(14.0)
                         controller.setCenter(CONSTANTINE)
+                        mapViewRef = this
                     }
                 },
                 update = { mapView ->
-                    // Rebuild markers on every recomposition so new entities appear
                     mapView.overlays.clear()
                     state.entities.forEach { entity ->
                         val marker = Marker(mapView).apply {
-                            position  = GeoPoint(entity.latitude, entity.longitude)
-                            title     = entity.name
-                            snippet   = "${entity.desks.size} guichet(s)"
+                            position = GeoPoint(entity.latitude, entity.longitude)
+                            title    = entity.name
+                            snippet  = context.getString(R.string.desks_available, entity.desks.size)
                             setAnchor(Marker.ANCHOR_CENTER, Marker.ANCHOR_BOTTOM)
-                            setOnMarkerClickListener { _, _ ->
-                                onMarkerClick(entity)
-                                true
-                            }
+                            setOnMarkerClickListener { _, _ -> onMarkerClick(entity); true }
                         }
                         mapView.overlays.add(marker)
                     }
@@ -100,20 +97,61 @@ fun ClientMapScreen(
                 }
             )
 
-            // Hint when no marker is selected
+            // ── Zoom controls (right side) ───────────────────
+            Column(
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .padding(end = 12.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SmallFloatingActionButton(
+                    onClick           = { mapViewRef?.controller?.zoomIn() },
+                    containerColor    = MaterialTheme.colorScheme.surface,
+                    contentColor      = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(Icons.Filled.Add, stringResource(R.string.zoom_in))
+                }
+                SmallFloatingActionButton(
+                    onClick           = { mapViewRef?.controller?.zoomOut() },
+                    containerColor    = MaterialTheme.colorScheme.surface,
+                    contentColor      = MaterialTheme.colorScheme.primary
+                ) {
+                    Icon(Icons.Filled.Remove, stringResource(R.string.zoom_out))
+                }
+            }
+
+            // ── My Tickets FAB (bottom start) ────────────────
+            BadgedBox(
+                badge = {
+                    if (ticketCount > 0) Badge { Text("$ticketCount") }
+                },
+                modifier = Modifier
+                    .align(Alignment.BottomStart)
+                    .padding(16.dp)
+            ) {
+                FloatingActionButton(
+                    onClick        = onMyTickets,
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor   = MaterialTheme.colorScheme.onPrimaryContainer
+                ) {
+                    Icon(Icons.Filled.ConfirmationNumber, stringResource(R.string.my_tickets))
+                }
+            }
+
+            // ── Hint (bottom center) when no marker selected ─
             if (selectedEntity == null) {
                 Surface(
                     modifier = Modifier
                         .align(Alignment.BottomCenter)
-                        .padding(16.dp)
+                        .padding(start = 80.dp, end = 16.dp, bottom = 16.dp)
                         .fillMaxWidth(),
                     color          = MaterialTheme.colorScheme.surface.copy(alpha = 0.92f),
                     shape          = MaterialTheme.shapes.medium,
                     tonalElevation = 4.dp
                 ) {
                     Text(
-                        text     = "Appuyez sur un marqueur pour voir les détails",
-                        modifier = Modifier.padding(16.dp),
+                        text     = stringResource(R.string.map_hint),
+                        modifier = Modifier.padding(12.dp),
                         style    = MaterialTheme.typography.bodyMedium,
                         color    = MaterialTheme.colorScheme.onSurfaceVariant
                     )
@@ -122,75 +160,47 @@ fun ClientMapScreen(
         }
     }
 
-    // Bottom sheet when a marker is tapped
+    // Bottom sheet on marker tap
     selectedEntity?.let { entity ->
         EntityMarkerSheet(
             entity       = entity,
             onDismiss    = { selectedEntity = null },
-            onViewDetail = {
-                selectedEntity = null
-                onEntityClick(entity.id)
-            }
+            onViewDetail = { selectedEntity = null; onEntityClick(entity.id) }
         )
     }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun EntityMarkerSheet(
-    entity: Entity,
-    onDismiss: () -> Unit,
-    onViewDetail: () -> Unit
-) {
+private fun EntityMarkerSheet(entity: Entity, onDismiss: () -> Unit, onViewDetail: () -> Unit) {
     val sheetState = rememberModalBottomSheetState()
-
-    ModalBottomSheet(
-        onDismissRequest = onDismiss,
-        sheetState       = sheetState
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 24.dp, vertical = 16.dp)
-        ) {
+    ModalBottomSheet(onDismissRequest = onDismiss, sheetState = sheetState) {
+        Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 24.dp, vertical = 16.dp)) {
+            Text(entity.name, style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold, color = MaterialTheme.colorScheme.primary)
+            Spacer(Modifier.height(4.dp))
             Text(
-                text       = entity.name,
-                style      = MaterialTheme.typography.headlineMedium,
-                fontWeight = FontWeight.Bold,
-                color      = MaterialTheme.colorScheme.primary
-            )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text  = "${entity.desks.size} guichet(s) disponible(s)",
+                stringResource(R.string.desks_available, entity.desks.size),
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant
             )
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text  = "Lat: %.4f  |  Lng: %.4f".format(entity.latitude, entity.longitude),
-                style = MaterialTheme.typography.bodySmall,
-                color = MaterialTheme.colorScheme.onSurfaceVariant
-            )
 
-            Spacer(modifier = Modifier.height(20.dp))
+            Spacer(Modifier.height(20.dp))
 
             entity.desks.forEach { desk ->
                 Row(
-                    modifier          = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
+                    modifier          = Modifier.fillMaxWidth().padding(vertical = 4.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Column(modifier = Modifier.weight(1f)) {
-                        Text(text = desk.name, style = MaterialTheme.typography.titleMedium)
-                        Text(
-                            text  = desk.description,
-                            style = MaterialTheme.typography.bodySmall,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant
-                        )
+                    Column(Modifier.weight(1f)) {
+                        Text(desk.name, style = MaterialTheme.typography.titleMedium)
+                        Text(desk.description, style = MaterialTheme.typography.bodySmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant)
                     }
                     Text(
-                        text  = "En cours: ${if (desk.currentServing == 0) "—" else "#${desk.currentServing}"}",
+                        stringResource(R.string.serving_now,
+                            if (desk.currentServing == 0) stringResource(R.string.none_serving)
+                            else "#${desk.currentServing}"),
                         style = MaterialTheme.typography.labelLarge,
                         color = MaterialTheme.colorScheme.secondary
                     )
@@ -198,16 +208,11 @@ private fun EntityMarkerSheet(
                 HorizontalDivider(modifier = Modifier.padding(vertical = 4.dp))
             }
 
-            Spacer(modifier = Modifier.height(16.dp))
-
-            Button(
-                onClick  = onViewDetail,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                Text("Prendre un ticket")
+            Spacer(Modifier.height(16.dp))
+            Button(onClick = onViewDetail, modifier = Modifier.fillMaxWidth()) {
+                Text(stringResource(R.string.take_ticket))
             }
-
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(Modifier.height(24.dp))
         }
     }
 }
